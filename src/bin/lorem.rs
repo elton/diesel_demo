@@ -29,5 +29,6 @@ fn main() {
     }
     diesel::update(posts)
         .set(published.eq(true))
-        .execute(&connection).expect("Error Update posts");
+        .execute(&connection)
+        .expect("Error Update posts");
 }
