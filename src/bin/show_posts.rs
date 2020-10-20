@@ -18,6 +18,8 @@ fn main() {
     println!("Displaying {} posts", results.len());
 
     for post in results {
+        println!("");
+        println!("Post id {}", post.id);
         println!("{}", post.title);
         println!("--------------------------------\n");
         println!("{}", post.body);

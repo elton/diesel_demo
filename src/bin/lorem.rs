@@ -15,29 +15,19 @@
 extern crate diesel;
 extern crate diesel_demo;
 
+use self::diesel::prelude::*;
 use self::diesel_demo::*;
-use std::io::stdin;
+use diesel_demo::schema::posts::dsl::*;
+use lipsum::{lipsum, lipsum_title};
 
 fn main() {
+    const POST_NUM: i32 = 10;
     let connection = establish_connection();
-
-    println!("What would you like your title to be?");
-    let mut title = String::new();
-    stdin().read_line(&mut title).unwrap();
-    let title = &title[..(title.len() - 1)]; // Drop the newline character
-    println!(
-        "\n Ok! Let's write {} (Press {} when finished) \n",
-        title, EOF
-    );
-    let mut body = String::new();
-    stdin().read_line(&mut body).unwrap();
-
-    let post = create_post(&connection, title, &body);
-    println!("\n Saved draft {} with id {}", title, post.id);
+    for _ in 0..POST_NUM {
+        let post = create_post(&connection, &lipsum_title(), &lipsum(25));
+        println!("\n Saved draft {} with id {}", post.title, post.id);
+    }
+    diesel::update(posts)
+        .set(published.eq(true))
+        .execute(&connection).expect("Error Update posts");
 }
-
-#[cfg(not(windows))]
-const EOF: &'static str = "CTRL+D";
-
-#[cfg(windows)]
-const EOF: &'static str = "CTRL+z";
